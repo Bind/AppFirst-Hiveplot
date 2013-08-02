@@ -1,0 +1,46 @@
+
+{% extends "base.html" %}
+
+{% block extra_css %}
+
+
+{% endblock %}
+
+{% block body_js %}
+<script type = "text/javascript">
+	$(document).ready(function() {
+	initializeHiveplotVars();
+	DocReady();
+	
+	    });
+	 
+</script>
+	
+
+{% endblock %}
+
+
+{% block ConfigMenu %}
+	{% include "snippets/Config_menu.html" %}
+{% endblock %}
+{% block header %}
+
+
+
+{% endblock %}
+
+{% block main_content %}
+<svg class="hiveplot"><g transform ="translate(420, 355)"></g>
+<div class="thumbnail_menu"></div>
+</svg>
+<script type = "text/javascript">
+
+
+
+
+</script>
+
+
+
+{% endblock %}
+

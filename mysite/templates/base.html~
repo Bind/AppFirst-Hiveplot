@@ -1,0 +1,71 @@
+ 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+    <title>{% block title %}HivePlot Network Visualization{% endblock %}</title>
+    <link rel="stylesheet" type = "text/css" href="{{STATIC_URL}}assets/css/base.css"> 
+
+<script type = "text/javascript" src ="{{STATIC_URL}}assets/js/d3/d3.v3.js"></script>
+<script type = "text/javascript" src ="{{STATIC_URL}}assets/js/jquery-1.10.1.js"></script>
+<script type = "text/javascript" src ="{{STATIC_URL}}assets/js/Jquery_ui/jquery-ui.js"></script>
+<script type = "text/javascript" src ="{{STATIC_URL}}assets/js/d3/hive.js"> </script>
+<script type = "text/javascript" src ="{{STATIC_URL}}assets/js/hiveplot.js"></script>
+<script type = "text/javascript" src ="{{STATIC_URL}}assets/js/hiveplot.js"></script>
+<script type = "text/javascript" src ="{{STATIC_URL}}assets/js/menu.js"></script>
+<script> //window.setInterval(search_bar_radius,6000); </script> 
+{% block extra_js %}{% endblock %}
+</head>
+<style>
+{% block extra_css %}{% endblock %}
+
+</style>
+
+
+<body>
+
+{% block ConfigMenu %}{% endblock %}
+
+  <div class="wrapper">
+    
+	
+	<div class="dropdown_button" data-open=false data-loaded="false">
+	<p class="dropdown_button_label">Configure Me</p>
+	{% block  header %}{% endblock %}
+    </div>
+	<div class= "window">
+    	  <div class="sidebar">
+		<div class="redraw_button"> <input class = 'search_bar' position= "relative" onchange='search_bar_radius()' /> </div>
+	<div id="heatmapslider" ></div>
+			<div id = 'SliderNote'> Response Time Threshold: <span id="SliderValue"> 0 </span></div>
+		<div class="Sidebar_scroll_list_wrapper"></div>
+	<!--	<ul>
+  <li><a href="#">+</a></li>
+  <li><a href="#">1</a></li>
+  <li><a href="#">2</a></li>
+  <li><a href="#">3</a></li>
+  <li><a href="#">4</a></li>
+  <li><a href="#">5</a></li>
+</ul><script>$('ul').circleMenu({
+  item_diameter: 40,
+  circle_radius: 100,
+  direction: 'bottom-right'
+});</script>
+-->
+	
+	<p class = "side_bar">
+
+	
+	
+          {% block sidebar %}
+          {% endblock %}
+    	  </div>
+
+   	  <div class="main_content">
+    	  {% block main_content %}{% endblock %}
+  	  </div>
+	</div>
+    {% block body_js%}{% endblock %}
+   </div>
+ </body>
+</html>

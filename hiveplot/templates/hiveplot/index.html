@@ -1,0 +1,9 @@
+{% if latest_node_list %}
+    <ul>
+    {% for node in latest_node_list %}
+        <li><a href="/hiveplot/{{ node.id }}/">{{ node.host_name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No Node data available.</p>
+{% endif %}
