@@ -1,0 +1,194 @@
+<div class="config_menu_wrapper"> 
+	<div class="config_menu"> 
+	<div class="AxesForm">
+	<div id="axes_config" class="X_Axis_config"><p class="X_Axis_config_label">X Axis</p>
+
+<fieldset class="string_search">
+	<legend> String Search:</legend>	
+	<select class="X_string_search_select">
+		<optgroup label="Server Data" >
+		<option  value=NONE>None</value>
+		<option  value=nickname>Nickname</value>
+		<option  value=running>running</value>
+		<option  value=os>Operating System</value>
+		<option  value=distribution>OS Distribution</value>
+		<option  value=architechture>Architecture</value>
+		</optgroup>
+		<input id = "SearchString_X" class="searchstring" placeholder="Input String" value="pod0">  </input>
+
+	</select>
+		</fieldset>
+	<fieldset class="threshold">
+	<legend> Set Threshold:</legend>	
+	<select class="X_ThresholdCategory">
+		<optgroup label="Server Data" >
+		<option value=NONE>No Threshold</value>
+		<option value=fromID>Server Sockets</value>
+		<option value=toID>Client Sockets</value>
+		
+		
+		</optgroup>
+		</select>
+		<select class="X_ThresholdOperator">
+<optgroup label="Operators">
+  <option value=">" >Greater than</value>
+  <option value="<" >Less than</value>
+  <option value="==">Equal to</value>
+  <option value=">=">Greater than or Equal To</value>
+  <option value="<=">Less than or Equal to</value>
+  <option value="!=">not Equal Too </value>
+</optgroup>
+
+		<input class="X_ThresholdNumber"placeholder="set Threshold" value = 0>  </input>
+		</select>
+
+</fieldset>
+
+<fieldset class="Selected" >
+<legend> Nodes to Display </legend>
+<div id = "X_Fieldset_Node_List" class="Fieldset_Node_List" data-clicked="false">
+</div>
+
+<div id = "X_droppable_node_list" class="droppable_Node_list"></div>
+</fieldset>
+
+
+
+ </div>
+	<div id="axes_config" class="Y_Axis_config"> <p class="Y_Axis_config_label">Y Axis</p>
+
+
+
+<fieldset class="string_search">
+	<legend> String Search:</legend>	
+	<select class="Y_string_search_select">
+		<optgroup label="Server Data" >
+		<option value=NONE>None</value>
+		<option value=nickname>Nickname</value>
+		<option value=running>running</value>
+		<option value=os>Operating System</value>
+		<option value=distribution>OS Distribution</value>
+		<option value=architechture>Architecture</value>
+		</optgroup>
+		<input id = "SearchString_Y" class="searchstring" placeholder="Input String" value="hbase">  </input>
+
+	</select>
+		</fieldset>
+	<fieldset class="threshold">
+	<legend> Set Threshold:</legend>	
+	<select class="Y_ThresholdCategory">
+		<optgroup label="Server Data" >
+		<option value=NONE>No Threshold</value>
+		<option value=fromID>Server Sockets</value>
+		<option value=toID>Client Sockets</value>
+		
+		
+		</optgroup>
+		</select>
+		<select class="Y_ThresholdOperator">
+<optgroup label="Operators">
+  <option value=">" >Greater than</value>
+  <option value="<" >Less than</value>
+  <option value="==">Equal to</value>
+  <option value=">=">Greater than or Equal To</value>
+  <option value="<=">Less than or Equal to</value>
+  <option value="!=">not Equal Too </value>
+</optgroup>
+
+		<input class="Y_ThresholdNumber"placeholder="set Threshold" value = 0>  </input>
+		</select>
+
+
+</fieldset>
+
+<fieldset class="Selected" >
+<legend> Nodes to Display </legend>
+<div id = "Y_Fieldset_Node_List" class="Fieldset_Node_List" data-clicked="false">
+</div>
+
+<div id = "Y_droppable_node_list"class="droppable_Node_list"></div>
+</fieldset>
+
+</div>
+	<div id="axes_config" class="Z_Axis_config"><p class="Z_Axis_config_label">Z Axis</p>
+
+
+
+<fieldset class="string_search">
+	<legend> String Search:</legend>	
+	<select class="Z_string_search_select">>
+		<optgroup label="Server Data" >
+		<option value=NONE>None</value>
+		<option  value=nickname>Nickname</value>
+		<option  value=running>running</value>
+		<option value=os>Operating System</value>
+		<option  value=distribution>OS Distribution</value>
+		<option  value=architechture>Architecture</value>
+		</optgroup>
+		<input id = "SearchString_Z" class="searchstring" placeholder="Input String" value="afqm">  </input>
+
+	</select>
+		</fieldset>
+	<fieldset class="threshold">
+	<legend> Set Threshold:</legend>	
+	<select class="Z_ThresholdCategory">
+		<optgroup label="Server Data" >
+		<option value=NONE>No Threshold</value>
+		<option value=fromID>Server Sockets</value>
+		<option value=toID>Client Sockets</value>
+		
+		
+		</optgroup>
+		</select>
+		<select class="Z_ThresholdOperator">
+<optgroup label="Operators">
+  <option value=">" >Greater than</value>
+  <option value="<" >Less than</value>
+  <option value="==">Equal to</value>
+  <option value=">=">Greater than or Equal To</value>
+  <option value="<=">Less than or Equal to</value>
+  <option value="!=">not Equal Too </value>
+</optgroup>
+
+		<input class="Z_ThresholdNumber"placeholder="set Threshold" value = 0>  </input>
+		</select>
+
+</fieldset>
+
+</fieldset>
+
+<fieldset class="Selected" >
+<legend> Nodes to Display </legend>
+<div id = "Z_Fieldset_Node_List" class="Fieldset_Node_List" data-clicked="false">
+</div>
+
+<div id = "Z_droppable_node_list"class="droppable_Node_list"></div>
+</fieldset>
+
+
+</div>
+<div class="Hiveplot_config"> 
+<input class="XAxisLabel" value = "X Axis" placeholder="X Axis Label">  </input><br>
+<input type = "checkbox" class = "checkBox" id="X_Checkbox_Boolean" title="Checked/&& Unchecked/||" value='false' > </input>
+<br><br>
+<input class="YAxisLabel" value = "Y Axis"placeholder="Y Axis Label">  </input><br>
+<input type = "checkbox" class = "checkBox" value = 'false' id="Y_Checkbox_Boolean" title = "Checked/&& Unchecked/||">  </input>
+
+<br><br>
+<input class="ZAxisLabel" value = "Z Axis"placeholder="Z Axis Label">  </input><br>
+<input type = "checkbox" class = "checkBox" value = 'false' id="Z_Checkbox_Boolean" title = "Checked/&& Unchecked/||">  </input>
+
+<br><br>
+</input>
+</div>
+	</div>
+
+
+<div class="submit_button" > 
+<script>
+d3.select(".submit_button").on("click", AxisFunctionPusher)
+</script>
+<div class="submit_button_background"><div class="submit_button_label">Submit</div></div></div>
+
+
+</div></div>

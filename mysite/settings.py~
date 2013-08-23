@@ -9,6 +9,12 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+USERNAME = "admin@appfirst.com"
+API_KEY = "586854651"
+BASE_URL = "https://wwws.appfirst.com/api/"
+
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.

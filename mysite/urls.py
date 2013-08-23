@@ -5,7 +5,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-url(r'^polls/', include('polls.urls',namespace="polls")),
+
 url(r'^hiveplot/', include('hiveplot.urls')),
 
     # Examples:

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+gedit /home/douglas/ActiveProject/mysite/hiveplot/templates/node/index.html /home/douglas/ActiveProject/mysite/hiveplot/static/js/hiveplot.js /home/douglas/ActiveProject/mysite/hiveplot/static/css/base.css /home/douglas/ActiveProject/mysite/mysite/templates/base.html  

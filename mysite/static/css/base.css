@@ -1,17 +1,20 @@
 
 
 .config_menu_wrapper{
-background-color:teal;
-height:725px;
+ background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAKklEQVQIW2Oc8uKPDwMM/GdIZ4QLADkMjAwzIQJQDkgh45TnfzaDZGC6AJOSEXs1jmwoAAAAAElFTkSuQmCC) repeat;
+position:relative;
+left:-7px;
+top:-7px;
+width:1266px;
+height:715px;
 padding:15px;
 display:none;
-border-top-left-radius: 15px;
-border-top-right-radius:15px;
+
 }
 .Hiveplot_config{
 position:absolute;
-top:43px;
-left:990px;
+top:30px;
+left:983px;
 width: 230px;
 height:407px;
 border-color:black;
@@ -22,13 +25,17 @@ padding:15px;
 }
 .config_menu{
 background-color:white;
+border-color:teal;
+border-style:solid;
+border-width:3px;
 width:1240px;
-height:700px;
+height:710px;
 padding:5px;
 border-radius: 15px;
 }
 #axes_config{
 position:relative;
+top:-7px;
 height:180px;
 width:900px;
 border-color:;
@@ -104,11 +111,13 @@ background-color:white;
 position:absolute;
 top:-27px;
 left:5px;}
+
 .redraw_button{
 position:relative;
 border-style:solid;
 border-color:teal;
-top:55px;
+background-color:white;
+top:60px;
 left:10px;
 border-radius: 15px;
 height:35px;
@@ -122,9 +131,9 @@ height:190px;
 width:240px;
 
 position:absolute;
-top:497px;
-left:990px;
-border-radius:15px;
+top:487px;
+left:985px;
+
 
 font-size:28px;
 text-align:center;
@@ -151,15 +160,15 @@ left:93px;
 }
 
 .wrapper{position: relative;
-	 background-color:teal;
-	 padding:5px;
-	 height:650px;
+	 background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAKklEQVQIW2Oc8uKPDwMM/GdIZ4QLADkMjAwzIQJQDkgh45TnfzaDZGC6AJOSEXs1jmwoAAAAAElFTkSuQmCC) repeat;
+	left:-10px;
+	top:-7px;
+	 padding:10px;
+	 height:670px;
+	 width:1280px;
 	
 		
-	border-top-left-radius: 15px;
-	border-top-right-radius:15px;
-	border-bottom-left-radius: 15px;
-	border-bottom-right-radius:15px;
+	
 }
 .header{position:relative;
 	
@@ -185,21 +194,25 @@ position:relative;
 top:5px;
 left:5px;
 border-radius: 15px;
+height:670px;
 }
 .link{
 z-index:-1;
 
 }
 .main_content{float:left;
-	      background-color:white;
+		background-color:white;
+	      border-color:teal;
+		border-style:solid;
+		border-width:3px;
 	      margin: 0px;
 	      
 	border-radius: 15px;
 	      position:absolute;
 	      left:0px;
 	      top:5px;
-		height: 630px;
-		width:800px;
+		height: 635px;
+		width:815px;
 }
 .thumbnail_menu{
 height:410px;
@@ -236,16 +249,16 @@ top:5px;
 
 }
 .sidebar{color: black;
-	background-color:white;
+	
 	border-color:black;
 	border-width:5px;
 	height:630px;
 	
 border-radius: 15px;
          position:absolute;	
-	 left:815px;
-	 top: 10px;
-         width:430px;
+	 left:830px;
+	 top: 5px;
+         width:435px;
 	 overflow:auto;
 }
 
@@ -255,12 +268,12 @@ border-radius: 15px;
 	border-width:3px;
 	border-style:solid;
 	border-color:teal;
-padding:2px;
+	padding:2px;
 	width: 260px;
-	height:105px;
+	height:100px;
 	position:absolute;
-	top:-45px;
-	left: 835px;
+	top:-40px;
+	left: 855px;
 	border-radius: 15px;
 	z-index:1;
 	}
@@ -275,13 +288,14 @@ font-style:serif;
 .Sidebar_scroll_list_wrapper{
 	
 	border-color:teal;
+background-color:white;
 	border-width:3px;
 	border-style:solid;
 	height:495px;
 	width:400px;
 	border-radius: 15px;
 	position:relative;
-	top:20px;
+	top:40px;
 	left:10px;
 
  
@@ -325,7 +339,7 @@ fill:#00ccff;
 .thumbnail_link {
   fill: none;
   stroke-width: 1.5px;
-	stroke-opacity:.2;
+  stroke-opacity:.2;
 }
 
 .thumbnail_axis, .thumbnail_node {
@@ -333,7 +347,7 @@ fill:#00ccff;
   stroke-width: 1.5px;
 }
 
-
+ 
 .process_menu{
 position:absolute;
 top:40px;
@@ -373,7 +387,7 @@ border-top-width:1px;
 border-top-style:solid;
 border-top-color:#00ccff;
 }
-.process_menu_{}
+
 .data-row{
 width:700px;
 position:relative;
@@ -398,17 +412,115 @@ margin-left:3px;
 height:15px;}
 .process_data{}
 
-#heatmapslider{
-position:relative;
-left:180px;
-top:10px;
-width:230px;
+.Ajax_Call_Button{
+position:absolute;
+height:65px;
+width:95px;
+left:10px;
+top:555px;
+border-radius:15px;
+text-align:center;
 
+background-color:teal;
+
+
+
+
+}
+
+.heatmapslider{
+position:relative;
+left:190px;
+top:20px;
+width:225px;
+background-color:teal;
+border-radius:5px;
+}
+.ui-slider-handle{
+background-color:white;
+border-color:teal;
+border-width:1px;
+border-style:solid;
+border-radius:5px;
 }
 
 #SliderNote{
 position:relative;
-top:10px;
-left:180px;
+top:20px;
+left:200px;
+width:230px;
+font-size:12px;
+}
 
+
+
+/*!
+necesarry CSS for Slider
+
+*/
+
+
+
+.ui-slider {
+	position: relative;
+	text-align: left;
+}
+.ui-slider .ui-slider-handle {
+	position: absolute;
+	z-index: 2;
+	width: 1.2em;
+	height: 1.2em;
+	cursor: default;
+}
+.ui-slider .ui-slider-range {
+	position: absolute;
+	z-index: 1;
+	font-size: .7em;
+	display: block;
+	border: 0;
+	background-position: 0 0;
+}
+
+/* For IE8 - See #6727 */
+.ui-slider.ui-state-disabled .ui-slider-handle,
+.ui-slider.ui-state-disabled .ui-slider-range {
+	filter: inherit;
+}
+
+.ui-slider-horizontal {
+	height: .8em;
+}
+.ui-slider-horizontal .ui-slider-handle {
+	top: -.3em;
+	margin-left: -.6em;
+}
+.ui-slider-horizontal .ui-slider-range {
+	top: 0;
+	height: 100%;
+}
+.ui-slider-horizontal .ui-slider-range-min {
+	left: 0;
+}
+.ui-slider-horizontal .ui-slider-range-max {
+	right: 0;
+}
+
+.ui-slider-vertical {
+	width: .8em;
+	height: 100px;
+}
+.ui-slider-vertical .ui-slider-handle {
+	left: -.3em;
+	margin-left: 0;
+	margin-bottom: -.6em;
+}
+.ui-slider-vertical .ui-slider-range {
+	left: 0;
+	width: 100%;
+}
+.ui-slider-vertical .ui-slider-range-min {
+	bottom: 0;
+}
+.ui-slider-vertical .ui-slider-range-max {
+	top: 0;
 }

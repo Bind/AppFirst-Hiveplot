@@ -8,6 +8,7 @@ function initializeHiveplotVars() {
 	nodes:[],
 	links:[],
 	serverproc:[],
+	ajaxcounter:0,
 	serverID:0,
 	processes:[],
 	processnodes:[],
@@ -15,7 +16,7 @@ function initializeHiveplotVars() {
 	serverdata:[],
 	AxesFunctions:[],
 	FunctionPointer: 0,
-	LeftMouseClick: false,
+	RespAvgThreshold:100000,
 	Transitioning:false,
 	Radius:3,
 	innerRadius:40,
@@ -24,8 +25,24 @@ function initializeHiveplotVars() {
     
     getHiveplotTopology();
     
-     initializeAxesFunctions();
+    
 }
+
+function ReinitializeHiveplotVars(){
+	HiveplotVars.topology=[];
+	HiveplotVars.nodes =[];
+	HiveplotVars.links=[];
+	HiveplotVars.serverproc=[];
+	HiveplotVars.serverID=0;
+	HiveplotVars.processes=[];
+	HiveplotVars.processnodes=[];
+	HiveplotVars.servertags=[];
+	HiveplotVars.serverdata=[];
+
+	ajaxTopology();
+
+}
+
 
 function getHiveplotServers(){
     $.ajax({
@@ -50,6 +67,7 @@ function getHiveplotServers(){
 
 function DocReady(){
 
+ initializeAxesFunctions();
 
 d3.selectAll('.checkBox').on('click',function(){
      if($(this).val() == 'true'){
@@ -141,11 +159,26 @@ console.log('remove this server')
 				
 
 
-$(function() {
-    $("#heatmapslider").slider();
 
-}
-)
+    $("#slider").slider({
+	min:0,
+	max:100000,
+	value:100000,
+	slide: function(event, ui){
+		$('#SliderValue').text(ui.value);
+
+HiveplotVars.RespAvgThreshold = ui.value;
+
+	d3.selectAll('.link')
+		.transition()
+		.duration(500)
+		.style('stroke',
+		function(){return ColorLink(d3.select(this).attr('data-from'))})
+			},
+	
+});
+
+
 }
 
 
@@ -177,6 +210,40 @@ function getHiveplotTopology(){
 	}
     });
 }
+function ajaxTopology(){
+ $.ajax({
+	type: "GET",
+	url: "/hiveplot/api/server/topology/data",
+	data: {},
+	dataType: "json",
+	success: function(data) {
+	    var json_data = eval(data);
+	 	ajaxServers();
+	
+},
+	error:function(jqXHR, textStatus, errorThrown){
+	    ajaxServers();
+	}
+    });
+}
+
+function ajaxServers(){
+ $.ajax({
+	type: "GET",
+	url: "/hiveplot/api/server/data",
+	data: {},
+	dataType: "json",
+	success: function(data)  {
+	    var json_data = eval(data);
+	    HiveplotVars.servers = json_data;
+},
+	error:function(jqXHR, textStatus, errorThrown){
+	  
+	}
+    });
+}
+
+
 
 function getHiveplotServerTags(){
     $.ajax({
@@ -201,6 +268,7 @@ function getServerIdprocess(server){
 	dataType: "json",
 	success: function(data)  {
 	    var json_data = eval(data);
+HiveplotVars.ajaxcounter = 0;
 	    HiveplotVars.serverproc[0] = (json_data);
 	    console.log("server process Data success");
 	   // appendDataToDrillDownMenu();
@@ -219,8 +287,7 @@ function getServerIdprocessDetail(dict){
     $.ajax({
 	type: "GET",
 	url: "/hiveplot/api/server/process/data/detail",
-	data: {'uid': dict[0],
-		
+	data: {'uid': dict[0],	
 },
 	dataType: "json",
 	success: function(data)  {
@@ -249,6 +316,9 @@ function getServerIdprocessDetail(dict){
 //_______________________________________HELPER FUNCS
 
 function printServerToSideBar(obj){
+	//this function is used print atooltip after mousing over a node.
+	//this function is used in Main(), Transition(), and the split axes methods
+	//and can receive both Node and cloned Node objects
 	console.log("printserver");
 			
 
@@ -315,15 +385,19 @@ function printServerToSideBar(obj){
    
 
 function NodesRedrawRadius(){
+//this function redraws the radius of all nodes or cloned nodes based upon their html5 data element 'data-clicked'
+//it all links that have a clicked node as its source
 
 d3.selectAll('.node').transition().attr('r',function(){
+var point = d3.select(this).attr('data-uid');
 if (d3.select(this).attr('data-clicked') == "true"){
-d3.selectAll('path.link[data-from="' + d3.select(this).attr('data-uid') + '"]' )
+
+d3.selectAll('path.link[data-from="' + d3.select(this).attr('data-uid') + '"]' )//this selects all links that stem from this node
 			.style("stroke", 'black').style('stroke-width','5px').style("stroke-opacity", 1);
 
 return 12;}
 else {
-var point = d3.select(this).attr('data-uid');
+
 d3.selectAll('path.link[data-from="' + point + '"]' )
 			.style("stroke", ColorLink(point)).style('stroke-width','1px').style("stroke-opacity", .5);
 
@@ -353,7 +427,7 @@ return HiveplotVars.Radius};
 
 
 }
-
+//quick and dirty way to reset all data-clicked attr to false, and then redraws all Nodes to proper radius by calling NodesRedrawRadius()
 function SetNodesFalse(){
 d3.selectAll('.node').attr('data-clicked', 'false');
 d3.selectAll('.cloned_node').attr('data-clicked','false');
@@ -374,6 +448,7 @@ function MouseOverNode(obj){
 
 
 function parseRotation(string){
+// I use this function to determine the degree a svg element is rotated, it accepts a transformation and returns what is inside the ()
 var start = string.indexOf('(') + 1;
 var end = string.indexOf(')');
 var ret = string.slice(start, end);
@@ -382,10 +457,12 @@ return ret;
 
 
 function degrees(radians) {
+//this function is declared in multiple places, used to convert 
   return radians / Math.PI * 180 - 90;
 }
 
 function Radius(){
+//unfinished function to dynamically size a node depending on how many other nodes are displayed
 console.log("radius")
 var temp = 0;
 for (Node in HiveplotVars.nodes)
@@ -396,12 +473,6 @@ else if(temp>30){return 4;}
 
 }
 
-
-function handleDragStop( event, ui ) {
-  var offsetXPos = parseInt( ui.offset.left );
-  var offsetYPos = parseInt( ui.offset.top );
-  alert( "Drag stopped!\n\nOffset: (" + offsetXPos + ", " + offsetYPos + ")\n");
-}
 
 
 function DeleteParent(){
@@ -418,8 +489,10 @@ function ColorLink(point){
 	console.log('COLORING LINK')
 	console.log(point)
 	if(typeof(HiveplotVars.topology.Node[point].resp_avg) === 'undefined'){return '#00ccff'};
-	if (HiveplotVars.topology.Node[point].resp_avg < 3000){return '#00ccff'};
-	if (HiveplotVars.topology.Node[point].resp_avg > 3000){return 'red'}
+	if (HiveplotVars.topology.Node[point].resp_avg < HiveplotVars.RespAvgThreshold){
+		//if (d3.select('.node[data-uid="' + point + '"]').attr('data-clicked') == 'true'){return 'black'}			
+												 return '#00ccff'};
+	if (HiveplotVars.topology.Node[point].resp_avg > HiveplotVars.RespAvgThreshold){return 'red'}
 		
 }
 
@@ -436,8 +509,10 @@ function ColorLink(point){
 
 //_____________________________________ INIT FUNCS
 function initializeAxesFunctions(){
+//load in functiones to be used to plot the first Hiveplot
+//this is the data necesarry to generate another hiveplot
 	HiveplotVars.AxesFunctions.push({
-		Title:"By Id",
+		Title:"By Id",//title isnt used...
 		x:function(obj){return (obj.id.indexOf("hbase") !== -1);}, 
 		y:function(obj){return (obj.id.indexOf("pod0") !== -1);}, 
 		z:function(obj){return true;},
@@ -473,6 +548,7 @@ function initializeAxesFunctions(){
 
 
 function CreateNodesList(){
+	//initialized an array of nodes for each Node in topology
 	for (x in HiveplotVars.topology.Node){
 		HiveplotVars.nodes.push({x: 1, y: 0, uid: 0, displayed: true, Axis: 'x'})}
 }	
@@ -656,6 +732,8 @@ var innerRadius = 40,
     outerRadius = 310;
 
 
+
+
 var angle = d3.scale.ordinal().domain(d3.range(4)).rangePoints([0, 2 * Math.PI]),
     radius = d3.scale.linear().range([innerRadius, outerRadius]),
     color = d3.scale.category10().domain(d3.range(20));
@@ -803,11 +881,15 @@ svg.selectAll(".link");
 svg.append('circle').attr('class','close_button_Z').attr('r', 12).attr("cx", outerRadius + 30 ).attr("transform", function(d) { return "rotate("+30+")" }).on('click', TransitionClonedZAxis).style('stroke','#00ccff').style('fill','white');	
 svg.selectAll(".link");
 
-
+d3.select('.main_content').append('div').attr('class','Ajax_Call_Button').text('get data').on('click',function(){
+ReinitializeHiveplotVars();
+});
 
  initThumbnails();
 initNodeListSidebar()
  //TransitionClonedXAxis()
+
+
 
 
 function degrees(radians) {
@@ -824,9 +906,7 @@ function degrees(radians) {
 function Transition(){
 console.log("transition")
 
-/*if (HiveplotVars.FunctionPointer < HiveplotVars.AxesFunctions.length - 1){
-	HiveplotVars.FunctionPointer++}
-	else {HiveplotVars.FunctionPointer = 0}*/
+
 	
 HiveplotVars.Transitioning = true;
 AppendCoordinatesToNodes();
@@ -1054,10 +1134,12 @@ var NodedataX1 = [];
 for (node in HiveplotVars.nodes){
 	if (HiveplotVars.nodes[node].Axis == 'x'){
 	NodedataX0.push(CopyConstructor(HiveplotVars.nodes[node]))
+
 }};
 for (node in HiveplotVars.nodes){
 	if (HiveplotVars.nodes[node].Axis == 'x'){
 	NodedataX1.push(CopyConstructor(HiveplotVars.nodes[node]))
+	
 }};
 	
 console.log(NodedataX0);
@@ -1091,6 +1173,7 @@ var Nodes_0 = svg.selectAll(".cloned_node_X0")
 	.append("circle")
 	.attr("transform", function(d) { return "rotate("+150+")" })
 	.style('fill', function(d){ return Color();})
+	.attr("data-uid",function(d){return d.uid})
 	.on("mouseover", function(){
 	console.log(this);
 		if (d3.select(this).attr('data-clicked') == 'false') {
@@ -1102,15 +1185,20 @@ var Nodes_0 = svg.selectAll(".cloned_node_X0")
 			printServerToSideBar(this);})
     	.on("mouseout", function(){
 		if (d3.select(this).attr('data-clicked') == 'false'){
+			var point = d3.select(this).attr('data-uid');
+			console.log(point)
 			d3.select(this).transition().style("fill", function(d) { return Color();});
 	 		$('.side_bar').html("");
+			console.log('SPLIT X AXIS Point');
+			console.log(point);
 			d3.selectAll('path.link[data-from="' + d3.select(this)[0][0].__data__.uid + '"]' )
-			.style("stroke", function(d){return Color();}).style("stroke-opacity", .5).style('stroke-width','1px'); 
+			
+			.style("stroke", function(d){return ColorLink(point);}).style("stroke-opacity", .5).style('stroke-width','1px'); 
 				NodesRedrawRadius();
 				 }
 			
 				}
-	)	
+	) 	
 	.on("click", function(){ 
 			var temp = d3.select(this).attr('data-uid');
 			if (d3.select(this).attr('data-clicked') == 'true'){
@@ -1125,7 +1213,7 @@ var Nodes_0 = svg.selectAll(".cloned_node_X0")
     	.attr("cx", function(d) { return radius(d.y); })
     	.attr("r", HiveplotVars.Radius)
    	.attr("data-Axis",function(d){return "x0"})
-	.attr("data-uid",function(d){return d.uid})
+	
 	.attr('data-clicked','false')
 	.attr("id","cloned_node_X")
 	.attr("class", "cloned_node")
@@ -1153,15 +1241,16 @@ var Nodes_1 = svg.selectAll(".cloned_node_X1")
 			printServerToSideBar(this);})
     	.on("mouseout", function(){
 		if (d3.select(this).attr('data-clicked') == 'false'){
+			var point = d3.select(this).attr('data-uid');
 			d3.select(this).transition().style("fill", function(d) { return Color();});
 	 		$('.side_bar').html("");
 			d3.selectAll('path.link[data-from="' + d3.select(this)[0][0].__data__.uid + '"]' )
-			.style("stroke", function(d){return Color();}).style("stroke-opacity", .5).style('stroke-width','1px'); 
+			.style("stroke", function(d){return ColorLink(point);}).style("stroke-opacity", .5).style('stroke-width','1px'); 
 				NodesRedrawRadius();
 				 }
 			
 				}
-	)  	
+	) 	
 	.on("click", function(){ 
 				var temp = d3.select(this).attr('data-uid');
 				if (d3.select(this).attr('data-clicked') == 'true'){
@@ -1253,7 +1342,7 @@ function degrees(radians) {
   return radians / Math.PI * 180 - 90;
 }
 function CopyConstructor(Node){
-	var temp = {x:0,y:0,displayed:false,Axis:''};
+	var temp = {x:0,y:0,displayed:false,Axis:'',uid:0};
 	temp.x = Node.x;
 	temp.y = Node.y;
 	temp.uid = Node.uid;
@@ -1325,10 +1414,12 @@ var Nodedata1 = [];
 for (node in HiveplotVars.nodes){
 	if (HiveplotVars.nodes[node].Axis == 'y'){
 	Nodedata0.push(CopyConstructor(HiveplotVars.nodes[node]))
+	Nodedata0[Nodedata0.length - 1].uid = node;
 }};
 for (node in HiveplotVars.nodes){
 	if (HiveplotVars.nodes[node].Axis == 'y'){
 	Nodedata1.push(CopyConstructor(HiveplotVars.nodes[node]))
+	Nodedata1[Nodedata1.length - 1].uid = node;
 }};
 	
 console.log(Nodedata0);
@@ -1371,12 +1462,13 @@ var Nodes_0 = svg.selectAll(".cloned_node_Y0")
 			.style("stroke", 'black').style("stroke-opacity", 1)};
 			 d3.selectAll('.tooltip').remove();
 			printServerToSideBar(this);})
-    	.on("mouseout", function(){
+    .on("mouseout", function(){
 		if (d3.select(this).attr('data-clicked') == 'false'){
+			var point = d3.select(this).attr('data-uid');
 			d3.select(this).transition().style("fill", function(d) { return Color();});
 	 		$('.side_bar').html("");
 			d3.selectAll('path.link[data-from="' + d3.select(this)[0][0].__data__.uid + '"]' )
-			.style("stroke", function(d){return Color();}).style("stroke-opacity", .5).style('stroke-width','1px'); 
+			.style("stroke", function(d){return ColorLink(point);}).style("stroke-opacity", .5).style('stroke-width','1px'); 
 				NodesRedrawRadius();
 				 }
 			
@@ -1423,10 +1515,11 @@ var Nodes_1 = svg.selectAll(".cloned_node_Y1")
 			printServerToSideBar(this);})
     	.on("mouseout", function(){
 		if (d3.select(this).attr('data-clicked') == 'false'){
+			var point = d3.select(this).attr('data-uid');
 			d3.select(this).transition().style("fill", function(d) { return Color();});
 	 		$('.side_bar').html("");
 			d3.selectAll('path.link[data-from="' + d3.select(this)[0][0].__data__.uid + '"]' )
-			.style("stroke", function(d){return Color();}).style("stroke-opacity", .5).style('stroke-width','1px'); 
+			.style("stroke", function(d){return ColorLink(point);}).style("stroke-opacity", .5).style('stroke-width','1px'); 
 				NodesRedrawRadius();
 				 }
 			
@@ -1594,10 +1687,12 @@ var Nodedata1 = [];
 for (node in HiveplotVars.nodes){
 	if (HiveplotVars.nodes[node].Axis == 'z'){
 	Nodedata0.push(CopyConstructor(HiveplotVars.nodes[node]))
+	Nodedata0[Nodedata0.length - 1].uid = node;
 }};
 for (node in HiveplotVars.nodes){
 	if (HiveplotVars.nodes[node].Axis == 'z'){
 	Nodedata1.push(CopyConstructor(HiveplotVars.nodes[node]))
+	Nodedata1[Nodedata1.length - 1].uid = node;
 }};
 	
 console.log(Nodedata0);
@@ -1809,7 +1904,8 @@ function CopyConstructor(Node){
 
 
 //_________________________________________________ Config Menu Javascript
-
+//the configuration menu uses the dyamically creates new functions based upon input from the configuration menu after submit has been clicked
+//the functions created take a single argument, a node obj
 function AxisFunctionPusher(){
 HiveplotVars.AxesFunctions.push({});
 var FuncPoint = HiveplotVars.AxesFunctions.length;
@@ -1947,8 +2043,6 @@ ret +=  " )?true:false; return (TEMP "+ bool + " temp)?true:false;"
 return ret;}
 else{ return "return temp;"};
 
-
-
 }
 
 
@@ -1970,9 +2064,6 @@ else{ return "return temp;"};
 
 
 }
-
-
-
 
 function GetManuallySelectedNodesZ(bool){
 var Stringarray = [];
@@ -2107,6 +2198,8 @@ function degrees(radians) {
 
 
 function search_bar_radius(){
+//the function executed when a div is clicked inside the scrollable sidebar list
+//it Highlights the clicked div as well as enlarging the radius of node corresponding with the server displayed in the div
 var search = [$('.search_bar').val()]
 var temp = [];
 for(node in HiveplotVars.topology.Node)
@@ -2180,21 +2273,8 @@ NodesRedrawRadius();
 };
 
 
-function searchBar_Processes(){
-
-var search = [$('.search_bar').val()];
-d3.selectAll('.data-row')
-	.transition()
-	.style('background-color',
-		function(){if ($(this).get(0)
-			.text.indexOf(search) !== -1){return 'black';}
-			return 'white';
-})
-
-
-}
-
 function initNodeListSidebar(){
+//creates the scrollable list of servers inside the .sidebar element
 
 
 d3.select('.Sidebar_scroll_list_wrapper')
@@ -2272,188 +2352,26 @@ d3.select('.Sidebar_scroll_list_wrapper')
 
 }
 
-function appendDataToDrillDownMenu(){	  
-
-d3.select('.process_menu_data_wrapper').selectAll('.process_data')
-		.data(HiveplotVars.serverproc)
-		.enter()
-		.append('div')
-		.attr('class','process_data')
-	           .attr('font-size', '15px')
-		   .attr('fill', 'black')
-		   .attr('data-process', function(d){return d.pid})
-		   .attr('data-start', function(d){return d.start})
-		   .on('click',function(){  
-		var dict = [];
-		console.log(d3.select('.process_menu').attr('data-serverid'))
-		console.log(d3.select(this).attr('data-process'))		
-		console.log(d3.select(this).attr('data-start'))
-
-		dict.push(d3.select('.process_menu').attr('data-serverid'));
-		dict.push(d3.select(this).attr('data-process'));
-		dict.push(d3.select(this).attr('data-start'));
-		getServerIdprocessDetail(dict);
-		
-		
-})
-		 
-		.text(function(d){return d.name});
-
-}
-
-function DrawDrillDownMenu(temp){
-console.log('drill down menu');
-
-d3.select('.main_content')
-	.append('div')
-	.attr('class','process_menu')
-	.attr('data-serverid',temp.nickname);
-	
-d3.select('.process_menu')
-	.append('div')
-	.on('click',searchBar_Processes)
-	.attr('class', "process_menu_title")
-	.text(temp.nickname);
-d3.select('.process_menu').append('div').attr('class','process_menu_data_header')
-d3.select('.process_menu_data_header').append('div').attr('class', 'column_1').text('Processes')
-d3.select('.process_menu_data_header').append('div').attr('class', 'column_2').text('PID')
-d3.select('.process_menu_data_header').append('div').attr('class', 'column_3').text('Target Server')
-d3.select('.process_menu_data_header').append('div').attr('class', 'column_4').text('Target Socket')
-d3.select('.process_menu_data_header').append('div').attr('class', 'column_5').text('Data In')
-d3.select('.process_menu_data_header').append('div').attr('class', 'column_6').text('Data Out')
-	
-d3.select('.process_menu')
-	.append('div')
-	.attr('class','process_menu_delete')
-	.on('click',function(){
-		 
-		d3.select('.process_menu').remove();})
-	.text("X");
-d3.select('.process_menu')
-	.append('div')
-	.attr('class',"process_menu_data_wrapper")
-
-
-}
-
-
-function checkProcessMap(processnum){
-	var ret = 0;
-
-	//console.log(json_data);
-	for(server in HiveplotVars.topology.Node){
-			
-			//console.log("SOCKETS")
-			var sockets = eval(HiveplotVars.topology.Node[server].ips);
-				//console.log(sockets)
-				
-				//console.log(HiveplotVars.processes[processnum])
-					for (ip in sockets){
-							
-						for (peer in HiveplotVars.processes[processnum].sockets){
-							if (sockets[ip] == HiveplotVars.processes[processnum].sockets[peer]['Peer IP']){
-									var row = 'data-row-'+ $('.process_menu_data_wrapper > div').size();	
-
-					d3.select('.process_menu_data_wrapper')
-	.append('div')
-	.attr('id',row)
-	.attr('class','data-row')
-	.on('mouseover',
-		function(){d3.select(this).style('background-color','white').transition().style('background-color','#00ccff')})
-	.on('mouseout',function(){d3.select(this).transition().style('background-color','white')});
-					d3.select('#' + row)
-						.append('div')
-						.attr('class','column_1')
-						.attr('data-procnum',function(){return processnum})
-						.text(function(){ 
-							for (proc in HiveplotVars.serverproc){
-							if (HiveplotVars.serverproc[proc].uid == HiveplotVars.processes[processnum].uid){
-								return HiveplotVars.serverproc[proc].name}
-				
-					}})
-
-					d3.select('#' + row)
-						.append('div')
-						.attr('class','column_2')
-						.attr('data-procnum',function(){return processnum})
-						.text(function(){ 
-							for (proc in HiveplotVars.serverproc[0]){
-							if (HiveplotVars.serverproc[0][proc].uid == HiveplotVars.processes[processnum].uid){
-								return HiveplotVars.serverproc[0][proc].pid}
-				
-					}})
-
-					d3.select('#'+ row)
-						.append('div')
-						.attr('class','column_3')
-						.attr('data-procnum',function(){return processnum})
-						.text(function(){ 
-								return HiveplotVars.topology.Node[server].id;})
-
-					
-					d3.select('#' + row)
-						.append('div')
-						.attr('class','column_4')
-						.attr('data-procnum',function(){return processnum})
-						.text(function(){ 
-								return HiveplotVars.processes[processnum].sockets[peer]['Peer IP'];})
-
-					d3.select('#' + row)
-						.append('div')
-						.attr('class','column_5')
-						.attr('data-procnum',function(){return processnum})
-						.text(function(){ 
-							return HiveplotVars.processes[processnum].sockets[peer]['Data Received (bytes)'];})
-					d3.select('#' + row)
-						.append('div')
-						.attr('class','column_6')
-						.attr('data-procnum',function(){return processnum})
-						.text(function(){ 
-								return HiveplotVars.processes[processnum].sockets[peer]['Data Sent (bytes)'];})
-
-
-
-
-
-						
-							console.log("SOCKETS")
-							console.log(sockets)
-							console.log(HiveplotVars.processes[processnum])
-							console.log("PEER IP MATCH OPEN NODE")}}
-			
-		}
-	}
-	
-}
-
 function getProcessDetail(){
-for(process in HiveplotVars.serverproc[0]){
-	
-var dict = [];
-		
-		
+	//Fires an ajax call for each process in serverproc[0]
+	for(process in HiveplotVars.serverproc[0]){
+		var dict = [];
 		dict.push(HiveplotVars.serverproc[0][process].uid);
 		dict.push(process);
 		getServerIdprocessDetail(dict);
 }
-
-
-
 }
 
 
 
 function processTopology(){
-
-
 function matchCheck(array, check){
-console.log('MATCH CHECK')
-for (data in array){
-if (array[data] == check){
-return false;
-}
-}
-
+	console.log('MATCH CHECK')
+	for (data in array){
+		if (array[data] == check){
+		return false;
+		}
+	}
 return true;
 }
 
@@ -2535,7 +2453,7 @@ for (node in processNodeArray){
 				console.log('plotting Nodes')
 				HiveplotVars.nodes[nodes].displayed = true;
 				HiveplotVars.nodes[nodes].x = y;
-				processLinkArray.push({source:processNodeArray[node],target:HiveplotVars.nodes[nodes],uid:0,displayed:true})
+				processLinkArray.push({source:processNodeArray[node],target:HiveplotVars.nodes[nodes],socketnum:peer,uid:0,displayed:true})
 			}
 			
 		    }
@@ -2585,18 +2503,18 @@ svg.selectAll(".process_link")
 	.duration(1500)
    	.attr("class", "process_link")*/
     	.attr("data-from", function(d){return d.source.uid;})
+	
     	.attr("d", d3.hive.link()
     	.angle(function(d) { return d.x; })	
    	.radius(function(d) { return radius(d.y); }))
-   	.style("stroke", '#FE9A2E' )
+   	.style("stroke", function(d){
+			console.log('process color threshold check')
+			console.log(d.socketnum)
+		if (HiveplotVars.serverproc[0][d.source.pnum]['detail'][0].sockets[d.socketnum]['Total Response Time (ms)'] > 0)
+					{return 'red'} 
+				else {return '#FE9A2E'}
+							})
 	.style("stroke-opacity", .5);
-
-
-
-
-
-
-
 
 svg.selectAll(".process_node")
     	.data(processNodeArray)
@@ -2707,23 +2625,115 @@ function DisplayProcessNameToolTip(obj){
 }
    
 
+function checkProcessMap(processnum){
+	var ret = 0;
+
+	//console.log(json_data);
+	for(server in HiveplotVars.topology.Node){
+			
+			//console.log("SOCKETS")
+			var sockets = eval(HiveplotVars.topology.Node[server].ips);
+				//console.log(sockets)
+				
+				//console.log(HiveplotVars.processes[processnum])
+					for (ip in sockets){
+							
+						for (peer in HiveplotVars.processes[processnum].sockets){
+							if (sockets[ip] == HiveplotVars.processes[processnum].sockets[peer]['Peer IP']){
+									var row = 'data-row-'+ $('.process_menu_data_wrapper > div').size();	
+
+					d3.select('.process_menu_data_wrapper')
+	.append('div')
+	.attr('id',row)
+	.attr('class','data-row')
+	.on('mouseover',
+		function(){d3.select(this).style('background-color','white').transition().style('background-color','#00ccff')})
+	.on('mouseout',function(){d3.select(this).transition().style('background-color','white')});
+					d3.select('#' + row)
+						.append('div')
+						.attr('class','column_1')
+						.attr('data-procnum',function(){return processnum})
+						.text(function(){ 
+							for (proc in HiveplotVars.serverproc){
+							if (HiveplotVars.serverproc[proc].uid == HiveplotVars.processes[processnum].uid){
+								return HiveplotVars.serverproc[proc].name}
+				
+					}})
+
+					d3.select('#' + row)
+						.append('div')
+						.attr('class','column_2')
+						.attr('data-procnum',function(){return processnum})
+						.text(function(){ 
+							for (proc in HiveplotVars.serverproc[0]){
+							if (HiveplotVars.serverproc[0][proc].uid == HiveplotVars.processes[processnum].uid){
+								return HiveplotVars.serverproc[0][proc].pid}
+				
+					}})
+
+					d3.select('#'+ row)
+						.append('div')
+						.attr('class','column_3')
+						.attr('data-procnum',function(){return processnum})
+						.text(function(){ 
+								return HiveplotVars.topology.Node[server].id;})
+
+					
+					d3.select('#' + row)
+						.append('div')
+						.attr('class','column_4')
+						.attr('data-procnum',function(){return processnum})
+						.text(function(){ 
+								return HiveplotVars.processes[processnum].sockets[peer]['Peer IP'];})
+
+					d3.select('#' + row)
+						.append('div')
+						.attr('class','column_5')
+						.attr('data-procnum',function(){return processnum})
+						.text(function(){ 
+							return HiveplotVars.processes[processnum].sockets[peer]['Data Received (bytes)'];})
+					d3.select('#' + row)
+						.append('div')
+						.attr('class','column_6')
+						.attr('data-procnum',function(){return processnum})
+						.text(function(){ 
+								return HiveplotVars.processes[processnum].sockets[peer]['Data Sent (bytes)'];})
 
 
-function HandleAjaxProcessCalls(num){
 
-if (num == HiveplotVars.serverproc[0].length-1){
+
+
+						
+							console.log("SOCKETS")
+							console.log(sockets)
+							console.log(HiveplotVars.processes[processnum])
+							console.log("PEER IP MATCH OPEN NODE")}}
+			
+		}
+	}
+	
+}
+
+
+
+
+
+function HandleAjaxProcessCalls(){
+HiveplotVars.ajaxcounter++;
+if (HiveplotVars.ajaxcounter == HiveplotVars.serverproc[0].length){
 processTopology();
+}
+}
+
+
+function UpdateDataAjax(){
+initializeHiveplotVars();
+
+
 
 
 
 }
-
-
-
-}
-
-
-
 
 
 

@@ -1,0 +1,4 @@
+To Do List:
+figure out how latest_node_list works
+or make jquery calls for data information
+dynamically draw hiveplot 

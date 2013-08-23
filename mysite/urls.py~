@@ -6,7 +6,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
 url(r'^polls/', include('polls.urls',namespace="polls")),
-url(r'^hiveplot/', include('hiveplot.urls'")),
+url(r'^hiveplot/', include('hiveplot.urls')),
 
     # Examples:
     # url(r'^$', 'mysite.views.home', name='home'),

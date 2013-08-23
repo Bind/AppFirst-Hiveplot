@@ -14,7 +14,8 @@
 <script type = "text/javascript" src ="{{STATIC_URL}}assets/js/hiveplot.js"></script>
 <script type = "text/javascript" src ="{{STATIC_URL}}assets/js/hiveplot.js"></script>
 <script type = "text/javascript" src ="{{STATIC_URL}}assets/js/menu.js"></script>
-<script> //window.setInterval(search_bar_radius,6000); </script> 
+
+<script> //window.setInterval(,60000); </script> 
 {% block extra_js %}{% endblock %}
 </head>
 <style>
@@ -28,43 +29,254 @@
 {% block ConfigMenu %}{% endblock %}
 
   <div class="wrapper">
-    
-	
-	<div class="dropdown_button" data-open=false data-loaded="false">
-	<p class="dropdown_button_label">Configure Me</p>
-	{% block  header %}{% endblock %}
-    </div>
-	<div class= "window">
-    	  <div class="sidebar">
-		<div class="redraw_button"> <input class = 'search_bar' position= "relative" onchange='search_bar_radius()' /> </div>
-	<div id="heatmapslider" ></div>
-			<div id = 'SliderNote'> Response Time Threshold: <span id="SliderValue"> 0 </span></div>
-		<div class="Sidebar_scroll_list_wrapper"></div>
-	<!--	<ul>
-  <li><a href="#">+</a></li>
-  <li><a href="#">1</a></li>
-  <li><a href="#">2</a></li>
-  <li><a href="#">3</a></li>
-  <li><a href="#">4</a></li>
-  <li><a href="#">5</a></li>
-</ul><script>$('ul').circleMenu({
-  item_diameter: 40,
-  circle_radius: 100,
-  direction: 'bottom-right'
-});</script>
+    <!--
+	<div class='Main_Menu'>
+	  
+	<div class="Menu_button" id="View_Config" data-loaded="false"> Add View</div>
+	<div class="Menu_button"><p></p></div>
+	<div class="Menu_button"><p></p></div>
+	<div class="Menu_button"><p></p></div>
+	<div class="Menu_button"><p></p></div>
+		</div>
 -->
 	
-	<p class = "side_bar">
-
-	
-	
-          {% block sidebar %}
-          {% endblock %}
-    	  </div>
+	{% block  header %}{% endblock %}
+   
+	<div class= "window">
+    	
 
    	  <div class="main_content">
+<div class="Menu_button" id="View_Config" data-loaded="false"> Add View</div>
     	  {% block main_content %}{% endblock %}
+  <div class="sidebar">
+	
+		<div class="redraw_button" title="Search for Servers by Name"> <input class = 'search_bar' onchange='search_bar_radius()' /> Search for Servers </div>
+	<div id="slider" class= 'heatmapslider' title="Slide to display edges with high response Time"></div>
+			<div id = 'SliderNote'> Response Time Threshold: <span id="SliderValue"> 100000 </span></div>
+		<div class="Sidebar_scroll_list_wrapper" title="List of Servers with data available"></div>
+	
+	
+
+	
+	
+          
+    	</div>
+	<div class="New_Config_Menu">
+	
+	<div class='config_menu_header'>
+	<div class='menu-config-label' font-size='20px' padding-left='5px'> Configuration Menu</div>
+	<div class='menu-config-label' id='config-button-x'><span position='relative' top='10px' id='config-button-x'>X Axis</span></div> 
+	<div class='menu-config-label' id='config-button-y'><span position='relative' top='10px' id='config-button-y'>Y Axis</span></div>
+	<div class='menu-config-label' id='config-button-z'><span position='relative' top='10px' id='config-button-z'>Z Axis</span></div> 
+	
+</div>
+<div class='delete_button'> X </div>
+<div class='Add_button'>Add!</div>
+<div class='start_tutorial'>First Time?</div>
+
+<!--        Axes ----------- X Axis Configuration                       -->
+	<div id="axes_config" class="X_Axis_config"><p class="X_Axis_config_label">X Axis</p>
+	
+<input class="XAxisLabel" id="Axis_Title" value = "Type in Axis Title" placeholder="X Axis Label">  </input><br>
+	<fieldset class="and_or_checkbox">
+	<legend color='black'>Intersection or Umbrella</legend>
+	<input float="left" type = "checkbox" class = "checkBox" id="X_Checkbox_Boolean" title="Checked/&& Unchecked/||" value='false' > </input>
+	<p class="and_or_instructions">click here for more information</p>	
+	</fieldset>
+	<fieldset class="string_search">
+
+		<legend> String Search:</legend>
+			
+		<select class="X_string_search_select">
+			<optgroup label="Server Data" >
+			<option  value=NONE>None</value>
+			<option  value=nickname>Nickname</value>
+			<option  value=running>running</value>
+			<option  value=os>Operating System</value>
+			<option  value=distribution>OS Distribution</value>
+			<option  value=architechture>Architecture</value>
+			</optgroup>
+		<input id = "SearchString_X" class="searchstring" placeholder="Input String" value="pod0">  </input>
+
+	</select>
+		</fieldset>
+	<fieldset class="threshold">
+	<legend> Set Threshold:</legend>	
+	<select class="X_ThresholdCategory">
+		<optgroup label="Server Data" >
+		<option value=NONE>No Threshold</value>
+		<option value=fromID>Sending Sockets</value>
+		<option value=toID>Receiving Sockets</value>
+		
+		
+		</optgroup>
+		</select>
+		<select class="X_ThresholdOperator">
+<optgroup label="Operators">
+  <option value=">" >Greater than</value>
+  <option value="<" >Less than</value>
+  <option value="==">Equal to</value>
+  <option value=">=">Greater than or Equal To</value>
+  <option value="<=">Less than or Equal to</value>
+  <option value="!=">not Equal Too </value>
+</optgroup>
+
+		<input class="X_ThresholdNumber"placeholder="set Threshold" value = 0>  </input>
+		</select>
+
+</fieldset>
+
+<fieldset class="Selected" >
+<legend> Nodes to Display </legend>
+<div id = "X_Fieldset_Node_List" class="Fieldset_Node_List" data-clicked="false">
+</div>
+
+<div id = "X_droppable_node_list" class="droppable_Node_list"></div>
+</fieldset>
+</div>
+<!--        Axes ----------- Y Axis Configuration                       -->
+
+ 
+
+
+<div id="axes_config" class="Y_Axis_config"> <p class="Y_Axis_config_label">Y Axis</p>
+
+<input class="YAxisLabel" id="Axis_Title" value = "Type in Axis Title"placeholder="Y Axis Label">  </input><br>
+<fieldset class="and_or_checkbox">
+	<legend color='black'>Intersection or Umbrella</legend>
+	<input float="left" type = "checkbox" class = "checkBox" id="Y_Checkbox_Boolean" title="Checked/&& Unchecked/||" value='false' > </input>
+	<p class="and_or_instructions">click here for more information</p>	
+	</fieldset>
+
+<fieldset class="string_search">
+	<legend> String Search:</legend>	
+	<select class="Y_string_search_select">
+		<optgroup label="Server Data" >
+		<option value=NONE>None</value>
+		<option value=nickname>Nickname</value>
+		<option value=running>running</value>
+		<option value=os>Operating System</value>
+		<option value=distribution>OS Distribution</value>
+		<option value=architechture>Architecture</value>
+		</optgroup>
+		<input id = "SearchString_Y" class="searchstring" placeholder="Input String" value="hbase">  </input>
+
+	</select>
+		</fieldset>
+	<fieldset class="threshold">
+	<legend> Set Threshold:</legend>	
+	<select class="Y_ThresholdCategory">
+		<optgroup label="Server Data" >
+		<option value=NONE>No Threshold</value>
+		<option value=fromID>Sending Sockets</value>
+		<option value=toID>Receiving Sockets</value>
+		
+		
+		</optgroup>
+		</select>
+		<select class="Y_ThresholdOperator">
+<optgroup label="Operators">
+  <option value=">" >Greater than</value>
+  <option value="<" >Less than</value>
+  <option value="==">Equal to</value>
+  <option value=">=">Greater than or Equal To</value>
+  <option value="<=">Less than or Equal to</value>
+  <option value="!=">not Equal Too </value>
+</optgroup>
+
+		<input class="Y_ThresholdNumber"placeholder="set Threshold" value = 0>  </input>
+		</select>
+
+
+</fieldset>
+
+<fieldset class="Selected" >
+<legend> Nodes to Display </legend>
+<div id = "Y_Fieldset_Node_List" class="Fieldset_Node_List" data-clicked="false">
+</div>
+
+<div id = "Y_droppable_node_list"class="droppable_Node_list"></div>
+</fieldset>
+
+</div>
+<!--        Axes ----------- Z Axis Configuration  -->
+
+<div id="axes_config" class="Z_Axis_config"><p class="Z_Axis_config_label">Z Axis</p>
+
+<input class="ZAxisLabel" id="Axis_Title" value = "Z Axis"placeholder="Z Axis Label">  </input><br>
+<fieldset class="and_or_checkbox">
+	<legend color='black'>Intersection or Umbrella</legend>
+	<input float="left" type = "checkbox" class = "checkBox" id="Z_Checkbox_Boolean" title="Checked/&& Unchecked/||" value='false' > </input>
+	<p class="and_or_instructions">click here for more information</p>	
+	</fieldset>
+
+<fieldset class="string_search">
+	<legend> String Search:</legend>	
+	<select class="Z_string_search_select">>
+		<optgroup label="Server Data" >
+		<option value=NONE>None</value>
+		<option  value=nickname>Nickname</value>
+		<option  value=running>running</value>
+		<option value=os>Operating System</value>
+		<option  value=distribution>OS Distribution</value>
+		<option  value=architechture>Architecture</value>
+		</optgroup>
+		<input id = "SearchString_Z" class="searchstring" placeholder="Input String" value="afqm">  </input>
+
+	</select>
+		</fieldset>
+	<fieldset class="threshold">
+	<legend> Set Threshold:</legend>	
+	<select class="Z_ThresholdCategory">
+		<optgroup label="Server Data" >
+		<option value=NONE>No Threshold</value>
+		<option value=fromID>Sending Sockets</value>
+		<option value=toID>Receiving Sockets</value>
+		
+		
+		</optgroup>
+		</select>
+		<select class="Z_ThresholdOperator">
+<optgroup label="Operators">
+  <option value=">" >Greater than</value>
+  <option value="<" >Less than</value>
+  <option value="==">Equal to</value>
+  <option value=">=">Greater than or Equal To</value>
+  <option value="<=">Less than or Equal to</value>
+  <option value="!=">not Equal Too </value>
+</optgroup>
+
+		<input class="Z_ThresholdNumber"placeholder="set Threshold" value = 0>  </input>
+		</select>
+
+</fieldset>
+
+</fieldset>
+
+<fieldset class="Selected" >
+<legend> Nodes to Display </legend>
+<div id = "Z_Fieldset_Node_List" class="Fieldset_Node_List" data-clicked="false">
+</div>
+
+<div id = "Z_droppable_node_list"class="droppable_Node_list"></div>
+</fieldset>
+
+<!--  ______________________________________ -->
+
+
+
+</div>
+
+
+
   	  </div>
+
+<div class="Process_popup">
+<div class='help_tip'>Click a View to Return to Server Display</div>
+<div class='help_tip'>Grayed out Tools will not be Active in Process View</div>
+
+
+</div>
 	</div>
     {% block body_js%}{% endblock %}
    </div>

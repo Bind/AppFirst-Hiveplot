@@ -8,11 +8,13 @@
 
 {% block body_js %}
 <script type = "text/javascript">
+	//window.setInterval(UpdateDataAjax(),6000)	
+
 	$(document).ready(function() {
 	initializeHiveplotVars();
 	DocReady();
-	
 	    });
+	
 	 
 </script>
 	
@@ -21,7 +23,7 @@
 
 
 {% block ConfigMenu %}
-	{% include "snippets/Config_menu.html" %}
+	
 {% endblock %}
 {% block header %}
 
@@ -30,15 +32,17 @@
 {% endblock %}
 
 {% block main_content %}
-<svg class="hiveplot"><g transform ="translate(420, 355)"></g>
-<div class="thumbnail_menu"></div>
+
+
+
+<svg class="hiveplot">
+
+<g transform ="translate(380, 385)"></g>
+
+<div class="thumbnail_menu">
+<div class="thumbnail_menu_label">Views</div></div>
 </svg>
-<script type = "text/javascript">
 
-
-
-
-</script>
 
 
 
